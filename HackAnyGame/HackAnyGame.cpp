@@ -53,7 +53,7 @@ static int recoil_delete()
 	HANDLE hProcess = 0;
 
 	uintptr_t moduleBase = 0, localPlayerPtr = 0, healthAddr = 0;
-	bool bHealth = false, bAmmo = false, bRecoil = false;
+	bool bHealth = false, bAmmo = false, bRecoil = false, bGrenade = false;
 
 	const int newValue = 1337;
 
@@ -82,11 +82,11 @@ static int recoil_delete()
 
 	while (GetExitCodeProcess(hProcess, &dwExit) && dwExit == STILL_ACTIVE)
 	{
-		if (GetAsyncKeyState(VK_DELETE) & 1)
+		if (GetAsyncKeyState(VK_F1) & 1)
 		{
 			bHealth = !bHealth;
 		}
-		if (GetAsyncKeyState(VK_END) & 1)
+		if (GetAsyncKeyState(VK_F2) & 1)
 		{
 			bAmmo = !bAmmo;
 
@@ -101,7 +101,7 @@ static int recoil_delete()
 				mem::PatchEx((BYTE*)(moduleBase + 0x637e9), (BYTE*)"\xFF\x0E", 2, hProcess);
 			}
 		}
-		if (GetAsyncKeyState(VK_HOME) & 1)
+		if (GetAsyncKeyState(VK_F3) & 1)
 		{
 			bRecoil = !bRecoil;
 
@@ -114,7 +114,20 @@ static int recoil_delete()
 				mem::PatchEx((BYTE*)(moduleBase + 0x63786), (BYTE*)"\x50\x8D\x4C\x24\x1C\x8B\xCE\xFF\xD2", 10, hProcess);
 			}
 		}
-		if (GetAsyncKeyState(VK_INSERT) & 1)
+		if (GetAsyncKeyState(VK_F4) & 1)
+		{
+			bGrenade = !bGrenade;
+
+			if (bGrenade)
+			{
+				mem::NopEx((BYTE*)(moduleBase + 0x63378), 2, hProcess);
+			}
+			else
+			{
+				mem::PatchEx((BYTE*)(moduleBase = 0x63378), (BYTE*)"\xFF\x08", 2, hProcess);
+			}
+		}
+		if (GetAsyncKeyState(VK_F12) & 1)
 		{
 			return 0;
 		}
